@@ -3,7 +3,7 @@
     <el-menu theme="dark" :default-active="activeIndex" mode="horizontal">
       <el-menu-item index="1">
         <router-link to="/">
-          CMBC GitHub 巡检平台
+          GitHub 巡检平台
         </router-link>
       </el-menu-item>
       <el-submenu index="2">
