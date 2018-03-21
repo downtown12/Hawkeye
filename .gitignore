@@ -107,3 +107,6 @@ deploy/Hawkeye.conf
 fe/node_modules
 .idea
 .vscode
+
+#any vim cache file
+**~
