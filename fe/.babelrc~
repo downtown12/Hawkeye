@@ -25,6 +25,6 @@
         "istanbul",
       ]
     }
-  },
+  }
   "plugins": ["transform-runtime"]
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <h1>{% block report_title%}{% endblock %}</h1>
+    <h2>报告概述</h2>
+    {% block report_brief %}{% endblock %}
+    <h2>报告详细</h2>
+    {% block report_detail %}{% endblock %}
+</body>
+<div id="footer"> 
+    {% block footer %} &copy; Copyright 2018 by <a href="http://www.cmbc.com.cn">CMBC</a>. {% endblock %} 
+</div>
+</html>
