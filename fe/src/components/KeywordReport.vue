@@ -23,6 +23,7 @@
 </template>
 
 <script>
+  require("babel-polyfill");
   export default {
     data() {
       return {
