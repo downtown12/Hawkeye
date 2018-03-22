@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block report_detail %}
+    {% for tag,leakages in tag_keyed_leakages.items() %}
+        <h3>关键词: {{tag}}</h3>
+        {% for leakage in leakages %}
+        {#<p>{{leakage}}</p>#}
+            <li>泄漏问题</li>
+                <p><b>项目名称：</b>{{leakage.project}}</p>
+                <p><b>敏感文件：</b>{{leakage.filename}}</p>
+                <p><b>代码详情：</b></p>
+                <div>
+                    <pre>
+                    {{leakage.detail}}
+                    </pre>
+                </div>
+                {#{% endfor %}#}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

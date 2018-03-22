@@ -1,44 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, make_response
 from pymongo import MongoClient
 from crontab import CronTab
 # from flask_cors import CORS, cross_origin
 from flask_restful import Resource, Api, reqparse
-import configparser
 import json
 import os
 import hashlib
 import base64
+from utils import leakage_col, query_col, blacklist_col, notice_col, base_path
+from report import keyword_report
 
-base_path = os.path.split(os.path.realpath(__file__))[0]
-conf_path = base_path + '/config.ini'
-
-
-def hawkeye_conf():
-    config = configparser.ConfigParser()
-    config.read(conf_path)
-    return config
-
-
-def get_conf(section, option):
-    config = hawkeye_conf()
-    return config.get(section=section, option=option)
-
-
-cli = MongoClient(host=get_conf('MongoDB', 'HOST'),
-                  port=int(get_conf('MongoDB', 'PORT')))
-try:
-    db = cli.Hawkeye
-    db.authenticate(get_conf('MongoDB', 'ACCOUNT'),
-                    get_conf('MongoDB', 'PASSWORD'))
-except BaseException:
-    db = cli.Hawkeye
-
-leakage_col = db.leakage
-query_col = db.query
-blacklist_col = db.blacklist
-notice_col = db.notice
 
 app = Flask(__name__)
 api = Api(app)
@@ -65,7 +38,7 @@ class Leakage(Resource):
         if args.get('tag'):
             filters = dict({'tag': args.get('tag')}, **filters)
         results = list(
-            leakage_col.find(filters, {'code': 0, 'detail': 0}).sort('datetime', -1).limit(args.get('limit')).skip(
+            leakage_col.find(filters, {'code': 0, 'detail': 0}).sort('datetime', 1).limit(args.get('limit')).skip(
                 args.get('limit') * (args.get('from') - 1)))
         total = leakage_col.count(filters)
         if total:
@@ -106,6 +79,21 @@ class Leakage(Resource):
 
 
 api.add_resource(Leakage, '/api/leakage')
+
+class KeywordReport(Resource):
+    def get(self, tag_list):
+        #print(type(tag_list), tag_list)
+        #tag_list = json.loads(tag_list)
+        tag_list = tag_list.split(",")
+
+        html = keyword_report(tag_list)
+        response = make_response(html)
+        response.headers["Content-Type"] = "text/html"
+        # use self.__class__.__name__ to get class's name
+        response.headers["Content-Disposition"] = 'attachment; filename="%s.html"' % (self.__class__.__name__)
+        return response
+
+api.add_resource(KeywordReport, '/api/report/keywordreport/<tag_list>')
 
 
 class Statistics(Resource):
